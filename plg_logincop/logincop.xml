@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.6" type="plugin" group="user" method="upgrade">
+    <name>User - Login Cop</name>
+    <creationDate>17 February 2017</creationDate>
+    <author>Massimo Di rimio</author>
+    <copyright>Copyright (C) 2017- Massimo Di Primio</copyright>
+    <license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
+    <authorEmail>massix@gmail.com</authorEmail>
+    <authorUrl>https://www.diprimio.com/contatti</authorUrl>
+    <version>1.0.0</version>
+    <description>PLG_LOGINCOP_DESCRIPTION</description>
+    <!-- -->
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+    <update> 
+        <schemas> 
+            <schemapath type="mysql">sql/updates</schemapath> 
+        </schemas> 
+    </update>
+    <!-- -->
+    <files>
+        <!--<folder>classes</folder>-->
+        <filename plugin="logincop">logincop.php</filename>
+        <filename plugin="logincop">logincop.xml</filename> <!-- Not strictly needed, but usefull -->
+        <filename plugin="logincop">index.html</filename>
+        <folder>sql</folder>
+    </files>
+    <languages>
+        <language tag="en-GB">languages/en-GB/en-GB.plg_user_logincop.ini</language>
+    </languages>
+    <!-- **************************** -->
+    <config>
+        <fields name="params">
+            <!-- Section Basic -->
+            <fieldset name="basic">
+                <field
+                    name="lc_send_mail"
+                    type="radio"
+                    label="PLG_LOGINCOP_MAIL_L"
+                    description="PLG_LOGINCOP_MAIL_D"
+                    class="btn-group btn-group-yesno"
+                    default="0"
+                   >
+                    <option value="1">JON</option>
+                    <option value="0">JOFF</option>
+                </field>
+                <field
+                    name="lc_usergroup"
+                    type="usergrouplist"
+                    label="PLG_LOGINCOP_GROUP_L"
+                    description="PLG_LOGINCOP_GROUP_D"
+                    showon="send_mail:1"
+                />
+                <field
+                    name="lc_watch_admin"
+                    type="radio"
+                    label="PLG_LOGINCOP_WATCH_ADMIN_L"
+                    description="PLG_LOGINCOP_WATCH_ADMIN_D"
+                    class="btn-group btn-group-yesno"
+                    default="0"
+                    >
+                    <option value="1">JON</option>
+                    <option value="0">JOFF</option>
+                </field>
+            </fieldset>
+            
+            <!-- Section Database -->
+            <fieldset name="database">
+                <field name="lc_db_enabled"
+                    type="radio"
+                    label="PLG_LOGINCOP_DB_ENABLED_L"
+                    description="PLG_LOGINCOP_DB_ENABLED_D"
+                    class="btn-group btn-group-yesno"
+                    default="0"
+                    >
+                    <option value="1">JON</option>
+                    <option value="0">JOFF</option>
+                </field>
+				
+                <field name="lc_db_daylimit"
+                    showon="lc_db_enabled:1"
+                    type="number"
+                    label="PLG_LOGINCOP_DB_TIMELIMIT_L"
+                    description="PLG_LOGINCOP_DB_TIMELIMIT_D"
+                    default="30"
+                    min="0"
+                    max="120"
+                    step="1"
+                    >                   
+                </field>
+				
+                <field name="lc_db_recslimit"
+                    showon="lc_db_enabled:1[AND]lc_db_daylimit:0"
+                    type="number"
+                    label="PLG_LOGINCOP_DB_RECSLIMIT_L"
+                    description="PLG_LOGINCOP_DB_RECSLIMIT_D"
+                    default="3000"
+                    min="0"
+                    max="1200"
+                    step="1"
+                    >                   
+                </field>
+				
+                <field name="db_rec_login_success"
+                    showon="lc_db_enabled:1"
+                    type="radio"
+                    label="PLG_LOGINCOP_DB_REC_LOGIN_SUCCESS_L"
+                    description="PLG_LOGINCOP_DB_REC_LOGIN_SUCCESS_D"
+                    class="btn-group btn-group-yesno"
+                    default="0"
+                    >
+                    <option value="1">JON</option>
+                    <option value="0">JOFF</option>
+                </field>
+            </fieldset>
+            
+            <!-- Section Email -->
+            <fieldset name="email">
+                <!-- Email format (e.g. Html or Plain-Text) -->
+                <field name="lc_mailformat"
+                    type="radio"
+                    label="PLG_LOGINCOP_MAILFORMAT_L"
+                    description="PLG_LOGINCOP_MAILFORMAT_D"
+                    class="btn-group btn-group-yesno"
+                    default="1"
+                    >
+                    <option value="1">Html</option>
+                    <option value="0">Plain-Text</option>
+                </field>
+                <!-- data to be added to email body: username -->
+                <field name="lc_mailbody_usernme"
+                    type="radio"
+                    label="PLG_LOGINCOP_MAILBODY_USERNAME_L"
+                    description="PLG_LOGINCOP_MAILBODY_USERNAME_D"
+                    class="btn-group btn-group-yesno"
+                    default="1"
+                    >
+                    <option value="1">JON</option>
+                    <option value="0">JOFF</option>
+                </field>
+                <!-- data to be added to email body: user_id -->
+                <field name="lc_mailbody_userid"
+                    type="radio"
+                    label="PLG_LOGINCOP_MAILBODY_USERID_L"
+                    description="PLG_LOGINCOP_MAILBODY_USERID_D"
+                    class="btn-group btn-group-yesno"
+                    default="1"
+                    >
+                    <option value="1">JON</option>
+                    <option value="0">JOFF</option>
+                </field>
+                <!-- data to be added to email body: time_login -->
+                <field name="lc_mailbody_login_time"
+                    type="radio"
+                    label="PLG_LOGINCOP_MAILBODY_LOGINTIME_L"
+                    description="PLG_LOGINCOP_MAILBODY_LOGINTIME_D"
+                    class="btn-group btn-group-yesno"
+                    default="1"
+                    >
+                    <option value="1">JON</option>
+                    <option value="0">JOFF</option>
+                </field>
+                <!-- data to be added to email body: ip_ddress -->
+                <field name="lc_mailbody_ipaddress"
+                    type="radio"
+                    label="PLG_LOGINCOP_MAILBODY_IPADDRESS_L"
+                    description="PLG_LOGINCOP_MAILBODY_IPADDRESS_D"
+                    class="btn-group btn-group-yesno"
+                    default="1"
+                    >
+                    <option value="1">JON</option>
+                    <option value="0">JOFF</option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+</extension>
