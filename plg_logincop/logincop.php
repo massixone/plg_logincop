@@ -1,8 +1,8 @@
 <?php
 /**
- * @package       Plugin User Login Traking for Joomla! 3.6
- * @author        A. S. M. Sadiqul Islam
- * @copyright (C) 2014- A. S. M. Sadiqul Islam
+ * @package       Plugin User Login Cop for Joomla! 3.6
+ * @author        Massimo Di Primio - http://www.diprimio.com
+ * @copyright (C) 2017 - Massimo Di Primio
  * @license       GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  **/
 
@@ -10,7 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.plugin.plugin');
 /**
- * Class plgUserUserlogintracking
+ * Class plgUserUserlogCop ###
  */
 class plgUserLoginCop extends JPlugin   {
     protected $db;                          # Database Object. Automatically assigned by parent constructor
@@ -24,8 +24,6 @@ class plgUserLoginCop extends JPlugin   {
      * Run the parent Constructor
      * so we do not forget or ignore anything that is run by jplugin 
      */
-   #public function __construct(&$subject, $config = array()) {
-   #    parent::__construct($subject, $config);
     public function __construct(&$subject, $options = array()) {
         parent::__construct($subject, $options);
         $this->db = JFactory::getDbo();                 // Get the global JDatabaseDriver object
@@ -43,37 +41,60 @@ class plgUserLoginCop extends JPlugin   {
             return;
         }
         $this->action = 1;
-        $this->handleLoginData ($options);
+        $this->manageLoginAction ($options);
         return;
     }
-    /* */
+    /**
+     * Joomla! trigger function acting after on Unsuccessful log in.
+     * @param   array $options Array holding options
+     * @return  void
+     * @since   1.0.0
+     */
     public function onUserLoginFailure($options)     {
         $this->action = 0;
-        $this->handleLoginData ($options);
+        $this->manageLoginAction ($options);
         return;
     }
-    /* */
-    public function handleLoginData ($options)   {
-        #$this->db = JFactory::getDbo();                 // Get the global JDatabaseDriver object
-        #$jinput = $this->app->input;
-
+    /**
+     * Joomla! trigger function acting after a user is successfully logged in.
+     * @param   array $options Array holding options
+     * @return  void
+     * @since   1.0.0
+     */
+    public function manageLoginAction ($options)   {
         $loginRecord               = array();
         $loginRecord['action']     = $this->action;
         $loginRecord['userid']     = empty($options['user']->id)       ? -1        : $options['user']->id;
         $loginRecord['username']   = empty($options['user']->username) ? 'UNKNOWN' : $options['user']->username;
-        $loginRecord['ip']         = $this->getIP();   #$this->_ip;
+        $loginRecord['ip']         = $this->getIP();
         $loginRecord['time_login'] = JFactory::getDate();       # This must be in the format 'YYYY-MM-DD hh:mi:ss'
 
         # Store data into Database if needed
         if (intval($this->params->get('lc_db_enabled')) != 0) {
-            if ( ($this->action == 1) && (intval($this->params->get('db_rec_login_success')) != 0) )    {
-                $this->storeLoginData($loginRecord);
+            if ($this->action == 1) {
+                if ( (intval($this->params->get('db_rec_login_success')) != 0) )    {
+                    $this->storeLoginData($loginRecord);
+                }
+            }
+            if ($this->action == 0) {
+                if ( (intval($this->params->get('db_rec_login_failure')) != 0) )    {
+                    $this->storeLoginData($loginRecord);
+                }
             }
         }
         
         # Send out email if needed
         if (intval($this->params->get('lc_send_mail')) != 0) {
-            $this->sendMailOut($loginRecord);
+            if ($this->action == 1) {
+                if (intval($this->params->get('lc_email_login_success') != 0 )) {
+                    $this->sendMailOut($loginRecord);
+                }
+            }
+            if ($this->action == 0) {
+                if (intval($this->params->get('lc_email_login_failure') != 0 )) {
+                    $this->sendMailOut($loginRecord);
+                }
+            }
         }
         return;
     }
@@ -225,7 +246,6 @@ class plgUserLoginCop extends JPlugin   {
                 }
             }
         }
-        
         return $ip;
     }
 }

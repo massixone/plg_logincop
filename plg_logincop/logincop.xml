@@ -7,7 +7,7 @@
     <license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
     <authorEmail>massix@gmail.com</authorEmail>
     <authorUrl>https://www.diprimio.com/contatti</authorUrl>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <description>PLG_LOGINCOP_DESCRIPTION</description>
     <!-- -->
     <install>
@@ -41,6 +41,7 @@
         <fields name="params">
             <!-- Section Basic -->
             <fieldset name="basic">
+                <!-- Should this app send emails ? -->
                 <field
                     name="lc_send_mail"
                     type="radio"
@@ -52,13 +53,45 @@
                     <option value="1">JON</option>
                     <option value="0">JOFF</option>
                 </field>
+                
+                <!-- Send Email On every successful login ? -->
+                <field
+                    name="lc_email_login_success"
+                    type="radio"
+                    label="PLG_LOGINCOP_EMAIL_LOGIN_SUCCESS_L"
+                    description="PLG_LOGINCOP_EMAIL_LOGIN_SUCCESS_D"
+                    class="btn-group btn-group-yesno"
+                    default="1"
+                    showon="lc_send_mail:1"
+                    >
+                    <option value="1">JON</option>
+                    <option value="0">JOFF</option>
+                </field>
+
+                <!-- Send Email On every Unsuccessful login ? -->
+                <field
+                    name="lc_email_login_failure"
+                    type="radio"
+                    label="PLG_LOGINCOP_EMAIL_LOGIN_FAILURE_L"
+                    description="PLG_LOGINCOP_EMAIL_LOGIN_FAILURE_D"
+                    class="btn-group btn-group-yesno"
+                    default="0"
+                    showon="lc_send_mail:1"
+                    >
+                    <option value="1">JON</option>
+                    <option value="0">JOFF</option>
+                </field>
+                
+                <!-- Select the group where emails have to be sent to -->
                 <field
                     name="lc_usergroup"
                     type="usergrouplist"
                     label="PLG_LOGINCOP_GROUP_L"
                     description="PLG_LOGINCOP_GROUP_D"
-                    showon="send_mail:1"
+                    showon="lc_send_mail:1"
                 />
+                
+                <!-- Watch also Administrator logins ? -->
                 <field
                     name="lc_watch_admin"
                     type="radio"
@@ -74,6 +107,7 @@
             
             <!-- Section Database -->
             <fieldset name="database">
+                <!-- Enable Database recording ? -->
                 <field name="lc_db_enabled"
                     type="radio"
                     label="PLG_LOGINCOP_DB_ENABLED_L"
@@ -84,7 +118,8 @@
                     <option value="1">JON</option>
                     <option value="0">JOFF</option>
                 </field>
-				
+                
+                <!-- Setup day limit recording -->
                 <field name="lc_db_daylimit"
                     showon="lc_db_enabled:1"
                     type="number"
@@ -96,7 +131,8 @@
                     step="1"
                     >                   
                 </field>
-				
+		
+                <!-- Setup Record limit recording -->
                 <field name="lc_db_recslimit"
                     showon="lc_db_enabled:1[AND]lc_db_daylimit:0"
                     type="number"
@@ -108,7 +144,8 @@
                     step="1"
                     >                   
                 </field>
-				
+		
+                <!-- Record all successful logins ? -->
                 <field name="db_rec_login_success"
                     showon="lc_db_enabled:1"
                     type="radio"
@@ -120,6 +157,20 @@
                     <option value="1">JON</option>
                     <option value="0">JOFF</option>
                 </field>
+                
+                <!-- Record all Unsuccessfful logins ? -->
+                <field name="db_rec_login_failure"
+                    showon="lc_db_enabled:1"
+                    type="radio"
+                    label="PLG_LOGINCOP_DB_REC_LOGIN_FAILURE_L"
+                    description="PLG_LOGINCOP_DB_REC_LOGIN_FAILURE_D"
+                    class="btn-group btn-group-yesno"
+                    default="0"
+                    >
+                    <option value="1">JON</option>
+                    <option value="0">JOFF</option>
+                </field>
+
             </fieldset>
             
             <!-- Section Email -->
@@ -135,6 +186,7 @@
                     <option value="1">Html</option>
                     <option value="0">Plain-Text</option>
                 </field>
+                
                 <!-- data to be added to email body: username -->
                 <field name="lc_mailbody_usernme"
                     type="radio"
@@ -146,6 +198,7 @@
                     <option value="1">JON</option>
                     <option value="0">JOFF</option>
                 </field>
+                
                 <!-- data to be added to email body: user_id -->
                 <field name="lc_mailbody_userid"
                     type="radio"
@@ -157,6 +210,7 @@
                     <option value="1">JON</option>
                     <option value="0">JOFF</option>
                 </field>
+                
                 <!-- data to be added to email body: time_login -->
                 <field name="lc_mailbody_login_time"
                     type="radio"
@@ -168,6 +222,7 @@
                     <option value="1">JON</option>
                     <option value="0">JOFF</option>
                 </field>
+                
                 <!-- data to be added to email body: ip_ddress -->
                 <field name="lc_mailbody_ipaddress"
                     type="radio"
